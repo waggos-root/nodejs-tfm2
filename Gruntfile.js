@@ -1,14 +1,14 @@
 "use strict";
 
-var exec = require("child_process");
+const exec = require("child_process");
 
-var APP_JS_FILES = ["app/assets/js/**/*.js", "config/**/*.js", "app/data/**/*.js",
+const APP_JS_FILES = ["app/assets/js/**/*.js", "config/**/*.js", "app/data/**/*.js",
     "app/routes/**/*.js", "server.js"
 ];
 
-var SUPPORT_JS_FILES = ["Gruntfile.js", "artifacts/**/*.js", "test/**/*.js"];
+const SUPPORT_JS_FILES = ["Gruntfile.js", "artifacts/**/*.js", "test/**/*.js"];
 
-var JS_FILES = APP_JS_FILES.concat(SUPPORT_JS_FILES);
+const JS_FILES = APP_JS_FILES.concat(SUPPORT_JS_FILES);
 
 
 module.exports = function(grunt) {

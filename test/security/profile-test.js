@@ -1,18 +1,18 @@
-var config = require("../../config/config");
-var assert = require("assert");
-var should = require("should");
-var async = require("async");
-var By = require("selenium-webdriver").By;
-var chromeDriver = require("chromedriver");
+const config = require("../../config/config");
+const assert = require("assert");
+const should = require("should");
+const async = require("async");
+const By = require("selenium-webdriver").By;
+const chromeDriver = require("chromedriver");
 
 // Documentation for the selenium JS webdriver: https://code.google.com/p/selenium/wiki/WebDriverJs
-var seleniumWebdriver = require("selenium-webdriver");
-var webDriver;
-var chrome = require("selenium-webdriver/chrome");
-var test = require("selenium-webdriver/testing");
-var proxy = require("selenium-webdriver/proxy");
-var path = chromeDriver.path;
-var service = new chrome.ServiceBuilder(path).build();
+const seleniumWebdriver = require("selenium-webdriver");
+let webDriver;
+const chrome = require("selenium-webdriver/chrome");
+const test = require("selenium-webdriver/testing");
+const proxy = require("selenium-webdriver/proxy");
+const path = chromeDriver.path;
+const service = new chrome.ServiceBuilder(path).build();
 
 // SUT is an acronym for System Under Test.
 var sutProtocol = "http://";

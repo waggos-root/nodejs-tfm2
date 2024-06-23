@@ -11,7 +11,7 @@ const swig = require("swig");
 const MongoClient = require("mongodb").MongoClient; // Driver for connecting to MongoDB
 const http = require("http");
 const marked = require("marked");
-//const nosniff = require('dont-sniff-mimetype');
+const nosniff = require('dont-sniff-mimetype');
 const app = express(); // Web framework to handle routing requests
 const routes = require("./app/routes");
 const { port, db, cookieSecret } = require("./config/config"); // Application config properties
@@ -35,12 +35,9 @@ MongoClient.connect(db, (err, db) => {
     }
     console.log(`Connected to the database`);
 
-    /*
-    // Fix for A5 - Security MisConfig
-    // TODO: Review the rest of helmet options, like "xssFilter"
-    // Remove default x-powered-by response header
     app.disable("x-powered-by");
 
+    /*
     // Prevent opening page in frame or iframe to protect from clickjacking
     app.use(helmet.frameguard()); //xframe deprecated
 
@@ -59,10 +56,10 @@ MongoClient.connect(db, (err, db) => {
     // Now it should be used in hit way, but the README alerts that could be
     // dangerous, like specified in the issue.
     // app.use(helmet.xssFilter({ setOnOldIE: true }));
+    */
 
     // Forces browser to only use the Content-Type set in the response header instead of sniffing or guessing it
     app.use(nosniff());
-    */
 
     // Adding/ remove HTTP Headers for security
     app.use(favicon(__dirname + "/app/assets/favicon.ico"));
