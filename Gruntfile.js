@@ -1,6 +1,6 @@
 "use strict";
 
-var exec = require("child_process").exec;
+var exec = require("child_process");
 
 var APP_JS_FILES = ["app/assets/js/**/*.js", "config/**/*.js", "app/data/**/*.js",
     "app/routes/**/*.js", "server.js"
@@ -162,6 +162,19 @@ module.exports = function(grunt) {
         done = this.async();
         var cmd = process.platform === "win32" ? "NODE_ENV=" + finalEnv + " & " : "NODE_ENV=" + finalEnv + " ";
 
+        var result = exec.spawnSync(cmd + "node artifacts/db-reset.js", {shell: false});
+        result.stdout.on("data", function(data) {
+            grunt.log.ok(data);
+            done();
+        });
+
+        result.stderr.on("data", function(data) {
+            grunt.log.error("db-reset:");
+            grunt.log.error(err);
+            grunt.log.error(stderr);
+            done();
+        });
+        /*
         exec(
             cmd + "node artifacts/db-reset.js",
             function(err, stdout, stderr) {
@@ -175,6 +188,7 @@ module.exports = function(grunt) {
                 done();
             }
         );
+        */
     });
 
     // Code Validation, beautification task(s).
