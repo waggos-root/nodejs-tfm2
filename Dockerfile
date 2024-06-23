@@ -9,8 +9,9 @@ ENV USER node
 ENV WORKDIR /home/$USER/app
 WORKDIR $WORKDIR
 COPY --from=0 /usr/src/app/node_modules node_modules
+COPY  . "$WORKDIR"
+# --chown=node --chmod=755
 RUN chown "$USER":"$USER" "$WORKDIR"
-COPY --chown=node --chmod=755 . "$WORKDIR"
 RUN chown -R "$USER":"$USER" /home/"$USER" && chmod -R g-s,o-rx /home/"$USER" && chmod -R o-wrx "$WORKDIR"
 USER $USER
 EXPOSE 4000
