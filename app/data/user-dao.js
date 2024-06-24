@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt-nodejs");
+const bcrypt = require("bcrypt");
 
 /* The UserDAO must be constructed with a connected database object */
 function UserDAO(db) {
@@ -16,29 +16,35 @@ function UserDAO(db) {
 
     this.addUser = (userName, firstName, lastName, password, email, callback) => {
 
-        // Create user document
-        const user = {
-            userName,
-            firstName,
-            lastName,
-            benefitStartDate: this.getRandomFutureDate(),
-            password: bcrypt.hashSync(password, bcrypt.genSaltSync())
-        };
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(password, salt, (err, hash) => {
+                // Create user document
+                const user = {
+                    userName,
+                    firstName,
+                    lastName,
+                    benefitStartDate: this.getRandomFutureDate(),
+                    password: hash
+                };
 
-        // Add email if set
-        if (email) {
-            user.email = email;
-        }
 
-        this.getNextSequence("userId", (err, id) => {
-            if (err) {
-                return callback(err, null);
-            }
-            console.log(typeof(id));
+                // Add email if set
+                if (email) {
+                    user.email = email;
+                }
 
-            user._id = id;
-            usersCol.insert(user, (err, result) => !err ? callback(null, result.ops[0]) : callback(err, null));
+                this.getNextSequence("userId", (err, id) => {
+                    if (err) {
+                        return callback(err, null);
+                    }
+                    console.log(typeof(id));
+
+                    user._id = id;
+                    usersCol.insert(user, (err, result) => !err ? callback(null, result.ops[0]) : callback(err, null));
+                });
+            });
         });
+
     };
 
     this.getRandomFutureDate = () => {
