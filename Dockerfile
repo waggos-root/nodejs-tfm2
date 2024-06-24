@@ -9,6 +9,7 @@ ENV USER node
 ENV WORKDIR /home/$USER/app
 WORKDIR $WORKDIR
 COPY --from=0 /usr/src/app/node_modules node_modules
+COPY --from=0 /usr/src/app/package-lock.json package-lock.json
 COPY  . "$WORKDIR"
 # --chown=node --chmod=755
 RUN chown "$USER":"$USER" "$WORKDIR"
