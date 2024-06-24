@@ -156,13 +156,13 @@ module.exports = function(grunt) {
     grunt.option("force", true);
 
     grunt.registerTask("db-reset", "(Re)init the database.", function(arg) {
-        var finalEnv = process.env.NODE_ENV || arg || "development";
-        var done;
+        const finalEnv = process.env.NODE_ENV || arg || "development";
+        let done;
 
         done = this.async();
-        var cmd = process.platform === "win32" ? "NODE_ENV=" + finalEnv + " & " : "NODE_ENV=" + finalEnv + " ";
+        const cmd = process.platform === "win32" ? "NODE_ENV=" + finalEnv + " & " : "NODE_ENV=" + finalEnv + " ";
 
-        var result = exec.spawnSync(cmd + "node artifacts/db-reset.js", {shell: false});
+        const result = exec.spawnSync(cmd + "node artifacts/db-reset.js", {shell: false});
         result.stdout.on("data", function(data) {
             grunt.log.ok(data);
             done();
@@ -174,21 +174,6 @@ module.exports = function(grunt) {
             grunt.log.error(stderr);
             done();
         });
-        /*
-        exec(
-            cmd + "node artifacts/db-reset.js",
-            function(err, stdout, stderr) {
-                if (err) {
-                    grunt.log.error("db-reset:");
-                    grunt.log.error(err);
-                    grunt.log.error(stderr);
-                } else {
-                    grunt.log.ok(stdout);
-                }
-                done();
-            }
-        );
-        */
     });
 
     // Code Validation, beautification task(s).
