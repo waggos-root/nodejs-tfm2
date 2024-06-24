@@ -61,8 +61,23 @@ function SessionHandler(db) {
             const invalidPasswordErrorMessage = "Invalid password";
             if (err) {
                 if (err.noSuchUser) {
-                    const ESAPI = require('node-esapi');
-                    console.log('Error: attempt to login with invalid user: %s', ESAPI.encoder().encodeForHTML(userName));
+                    console.log("Error: attempt to login with invalid user: ", userName);
+
+                    // Fix for A1 - 3 Log Injection - encode/sanitize input for CRLF Injection
+                    // that could result in log forging:
+                    // - Step 1: Require a module that supports encoding
+                    // const ESAPI = require('node-esapi');
+                    // - Step 2: Encode the user input that will be logged in the correct context
+                    // following are a few examples:
+                    // console.log('Error: attempt to login with invalid user: %s',
+                    //     ESAPI.encoder().encodeForHTML(userName));
+                    // console.log('Error: attempt to login with invalid user: %s',
+                    //     ESAPI.encoder().encodeForJavaScript(userName));
+                    // console.log('Error: attempt to login with invalid user: %s',
+                    //     ESAPI.encoder().encodeForURL(userName));
+                    // or if you know that this is a CRLF vulnerability you can target this specifically as follows:
+                    // console.log('Error: attempt to login with invalid user: %s',
+                    //     userName.replace(/(\r\n|\r|\n)/g, '_'));
 
                     return res.render("login", {
                         userName: userName,
@@ -98,13 +113,8 @@ function SessionHandler(db) {
             // by wrapping the below code as a function callback for the method req.session.regenerate()
             // i.e:
             // `req.session.regenerate(() => {})`
-            return req.session.regenerate(() => {
-                user.userId = user._id;
-                req.session.userId = user._id;
-                return res.redirect(user.isAdmin ? "/benefits" : "/dashboard");
-            });
-            //req.session.userId = user._id;
-            //return res.redirect(user.isAdmin ? "/benefits" : "/dashboard");
+            req.session.userId = user._id;
+            return res.redirect(user.isAdmin ? "/benefits" : "/dashboard");
         });
     };
 
@@ -131,7 +141,12 @@ function SessionHandler(db) {
         const FNAME_RE = /^.{1,100}$/;
         const LNAME_RE = /^.{1,100}$/;
         const EMAIL_RE = /^[\S]+@[\S]+\.[\S]+$/;
+        const PASS_RE = /^.{1,20}$/;
+        /*
+        //Fix for A2-2 - Broken Authentication -  requires stronger password
+        //(at least 8 characters with numbers and both lowercase and uppercase letters.)
         const PASS_RE =/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        */
 
         errors.userNameError = "";
         errors.firstNameError = "";

@@ -1,8 +1,6 @@
-version: "3.7"
-
 services:
   web:
-    build: .
+    image: washingtongz/nodejs-tfm:${APP_VERSION}
     environment:
       NODE_ENV:
       MONGODB_URI: mongodb://mongo:27017/nodegoat
@@ -11,7 +9,7 @@ services:
       - "4000:4000"
 
   mongo:
-    image: mongo:4.4
+    image: mongo:${MONGO_VERSION}
     user: mongodb
     expose:
       - 27017
