@@ -41,7 +41,7 @@ function ProfileHandler(db) {
             bankRouting
         } = req.body;
 
-        const regexPattern = /([0-9]+)\#/;
+        const regexPattern = /([\d]+)#/;
         // Allow only numbers with a suffix of the letter #, for example: 'XXXXXX#'
         const testComplyWithRequirements = regexPattern.test(bankRouting);
         // if the regex test fails we do not allow saving

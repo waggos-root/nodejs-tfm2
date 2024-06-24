@@ -39,6 +39,24 @@ function ProfileDAO(db) {
     };
     */
 
+    const crypto = require("crypto");
+    const config = require("../../config/config");
+    const createIV = () => {
+        // create a random salt for the PBKDF2 function - 16 bytes is the minimum length according to NIST
+        const salt = crypto.randomBytes(16);
+        return crypto.pbkdf2Sync(config.cryptoKey, salt, 100000, 512, "sha512");
+    };
+    const encrypt = (toEncrypt) => {
+        config.iv = createIV();
+        const cipher = crypto.createCipheriv(config.cryptoAlgo, config.cryptoKey, config.iv);
+        return `${cipher.update(toEncrypt, "utf8", "hex")} ${cipher.final("hex")}`;
+    };
+
+    const decrypt = (toDecrypt) => {
+        const decipher = crypto.createDecipheriv(config.cryptoAlgo, config.cryptoKey, config.iv);
+        return `${decipher.update(toDecrypt, "hex", "utf8")} ${decipher.final("utf8")}`;
+    };
+
     this.updateUser = (userId, firstName, lastName, ssn, dob, address, bankAcc, bankRouting, callback) => {
 
         // Create user document
@@ -58,12 +76,6 @@ function ProfileDAO(db) {
         if (bankRouting) {
             user.bankRouting = bankRouting;
         }
-        if (ssn) {
-            user.ssn = ssn;
-        }
-        if (dob) {
-            user.dob = dob;
-        }
         /*
         // Fix for A7 - Sensitive Data Exposure
         // Store encrypted ssn and DOB
@@ -74,6 +86,12 @@ function ProfileDAO(db) {
             user.dob = encrypt(dob);
         }
         */
+        if(ssn) {
+            user.ssn = encrypt(ssn);
+        }
+        if(dob) {
+            user.dob = encrypt(dob);
+        }
 
         users.update({
                 _id: parseInt(userId)
